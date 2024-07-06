@@ -1,7 +1,7 @@
 <h1>Basic Crud Application</h1>
 <h3>Requirements</h3>
 <ul>
-  <li>JDK (Recommended: <a href="https://www.oracle.com/java/technologies/downloads/">OracleJDK</a>)</li>
+  <li>JDK (Recommended: <a href="https://www.oracle.com/java/technologies/downloads/" target="_blank">OracleJDK</a>)</li>
   <li>Maven</li>
   <li>IDE of choice (VSCode, Intellij, Eclipse..)</li>
 </ul>
