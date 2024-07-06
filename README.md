@@ -4,6 +4,7 @@
   <li>JDK (Recommended: <a href="https://www.oracle.com/java/technologies/downloads/" target="_blank">OracleJDK</a>)</li>
   <li>Maven</li>
   <li>IDE of choice (VSCode, Intellij, Eclipse..)</li>
+  <li>Postman</li>
 </ul>
 This is a simple project that uses controllers to create/change information about locations and departments.
 The applicaton contains 2 entities: Location and Department. Each department has many locations; one location has only one department.
