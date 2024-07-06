@@ -1,8 +1,11 @@
 package com.example.locationapp.service.impl;
 
 import com.example.locationapp.model.dto.DepartmentDto;
+import com.example.locationapp.model.dto.LocationDto;
 import com.example.locationapp.model.entity.Department;
+import com.example.locationapp.model.entity.Location;
 import com.example.locationapp.model.mapper.DepartmentMapper;
+import com.example.locationapp.model.mapper.LocationMapper;
 import com.example.locationapp.repository.DepartmentRepository;
 import com.example.locationapp.service.DepartmentService;
 import lombok.AllArgsConstructor;
@@ -29,9 +32,24 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    public DepartmentDto getDepartmentByName(String name) {
+        return DepartmentMapper.INSTANCE.toDto(departmentRepository.findByName(name));
+    }
+
+    @Override
+    public void addLocationToDepartment(DepartmentDto departmentDto, LocationDto locationDto) {
+        Department department = departmentRepository.findById(UUID.fromString(departmentDto.getId())).orElse(null);
+        if (department != null) {
+            List<Location> locations = department.getLocations();
+            locations.add(LocationMapper.INSTANCE.toEntity(locationDto));
+            department.setLocations(locations);
+            departmentRepository.save(department);
+        }
+    }
+
+    @Override
     public DepartmentDto createDepartment(DepartmentDto departmentDto) {
-        Department department = DepartmentMapper.INSTANCE.toEntity(departmentDto);
-        departmentRepository.save(department);
+        departmentRepository.save(DepartmentMapper.INSTANCE.toEntity(departmentDto));
         return departmentDto;
     }
 

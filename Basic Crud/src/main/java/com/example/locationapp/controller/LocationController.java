@@ -1,8 +1,11 @@
 package com.example.locationapp.controller;
 
+import com.example.locationapp.model.dto.DepartmentDto;
 import com.example.locationapp.model.dto.LocationDto;
+import com.example.locationapp.model.dto.SetDepartmentRequest;
 import com.example.locationapp.model.entity.Location;
 import com.example.locationapp.model.mapper.DepartmentMapper;
+import com.example.locationapp.model.mapper.LocationMapper;
 import com.example.locationapp.repository.DepartmentRepository;
 import com.example.locationapp.service.DepartmentService;
 import com.example.locationapp.service.LocationService;
@@ -18,36 +21,33 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
+@RequestMapping("locations")
 public class LocationController {
     LocationService locationService;
     DepartmentService departmentService;
 
-    public LocationController(LocationService locationService) {
+    public LocationController(LocationService locationService, DepartmentService departmentService) {
+        this.departmentService = departmentService;
         this.locationService = locationService;
     }
 
-    @GetMapping("/locations")
+    @GetMapping("/all")
     public String getLocations(Model model) {
         List<LocationDto> locations = locationService.getAllLocations();
         model.addAttribute("locations", locations);
         return "index.html";
     }
 
-    //    @PostMapping("/add")
-//    public String addNewLocation(@RequestParam String locName, @RequestParam String department) {
-//        LocationDto locationDto = new LocationDto();
-//        locationDto.setId(UUID.randomUUID().toString());
-//        locationDto.setName(locName);
-//        locationDto.setDepartment(DepartmentMapper.INSTANCE.toEntity(departmentService.getDepartmentById(UUID.fromString(department))));
-//        return "redirect:/";
-//    }
-    @PostMapping("/add/{locName}/{department}")
-    public String addNewLocation(@PathVariable String locName, @PathVariable String department) {
-        LocationDto locationDto = new LocationDto();
-        locationDto.setId(UUID.randomUUID().toString());
-        locationDto.setName(locName);
-        locationDto.setDepartment(DepartmentMapper.INSTANCE.toEntity(departmentService.getDepartmentById(UUID.fromString(department))));
-        return "redirect:/";
+    @PostMapping("/add")
+    public String addNewLocation(@RequestBody LocationDto locationDto) {
+        locationService.createLocation(locationDto);
+        return "redirect:/locations";
+    }
+
+    @PostMapping("/set-department")
+    public String setDepartments(@RequestBody SetDepartmentRequest setDepartmentRequest) {
+        locationService.updateLocation(LocationMapper.INSTANCE.toDto(setDepartmentRequest.getLocation()), DepartmentMapper.INSTANCE.toDto(setDepartmentRequest.getDepartment()));
+        return "redirect:/locations";
     }
 
 
