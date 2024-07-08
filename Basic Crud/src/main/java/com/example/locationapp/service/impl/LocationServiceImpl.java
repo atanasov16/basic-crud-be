@@ -1,5 +1,6 @@
 package com.example.locationapp.service.impl;
 
+import com.example.locationapp.model.dto.DepartmentDto;
 import com.example.locationapp.model.dto.LocationDto;
 import com.example.locationapp.model.dto.SetDepartmentRequest;
 import com.example.locationapp.model.entity.Department;
@@ -33,9 +34,13 @@ public class LocationServiceImpl implements LocationService {
 
 
     @Override
-    public LocationDto createLocation(LocationDto locationDto) {
-        locationRepository.save(LocationMapper.INSTANCE.toEntity(locationDto));
-        return locationDto;
+    public LocationDto createLocation(SetDepartmentRequest setDepartmentRequest) {
+        Location location = LocationMapper.INSTANCE.toEntity(setDepartmentRequest.getLocation());
+        Department department = DepartmentMapper.INSTANCE.toEntity(departmentService.getDepartmentById(DepartmentMapper.INSTANCE.toEntity(setDepartmentRequest.getDepartment()).getUuid()));
+//        DepartmentDto departmentDto = departmentService.getDepartmentById(DepartmentMapper.INSTANCE.toEntity(setDepartmentRequest.getDepartment()).getUuid());
+        location.setDepartment(department);
+        locationRepository.save(location);
+        return setDepartmentRequest.getLocation();
     }
 
     @Override
@@ -52,8 +57,8 @@ public class LocationServiceImpl implements LocationService {
 
 
     @Override
-    public void deleteLocationDto(UUID id) {
-
+    public void deleteLocationDto(LocationDto locationDto) {
+        locationRepository.delete(LocationMapper.INSTANCE.toEntity(locationDto));
     }
 
     @Override

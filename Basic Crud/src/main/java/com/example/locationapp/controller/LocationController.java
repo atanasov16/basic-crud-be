@@ -19,20 +19,14 @@ public class LocationController {
         this.locationService = locationService;
     }
 
-//    @GetMapping("/all")
-//    public String getLocations(Model model) {
-//        List<LocationDto> locations = locationService.getAllLocations();
-//        model.addAttribute("locations", locations);
-//        return "index.html";
-//    }
-        @GetMapping()
+    @GetMapping()
     public List<LocationDto> getLocations() {
         return locationService.getAllLocations();
     }
 
     @PostMapping("/add")
-    public String addNewLocation(@RequestBody LocationDto locationDto) {
-        locationService.createLocation(locationDto);
+    public String addNewLocation(@RequestBody SetDepartmentRequest setDepartmentRequest) {
+        locationService.createLocation(setDepartmentRequest);
         return "redirect:/locations";
     }
 
@@ -45,6 +39,12 @@ public class LocationController {
     @PostMapping("/edit-location/{id}")
     public String editLocation(@PathVariable String id, @RequestBody LocationDto locationDto) {
         locationService.editLocation(locationDto, id);
+        return "redirect:/locations";
+    }
+
+    @DeleteMapping("/delete")
+    public String deleteLocation(@RequestBody LocationDto locationDto) {
+        locationService.deleteLocationDto(locationDto);
         return "redirect:/locations";
     }
 }

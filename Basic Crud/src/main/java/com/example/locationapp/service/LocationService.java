@@ -8,9 +8,9 @@ import java.util.UUID;
 public interface LocationService {
     List<LocationDto> getAllLocations();
     LocationDto getLocationById(UUID id);
-    LocationDto createLocation(LocationDto locationDto);
+    LocationDto createLocation(SetDepartmentRequest setDepartmentRequest);
     LocationDto updateLocation(SetDepartmentRequest setDepartmentRequest);
-    void deleteLocationDto(UUID id);
+    void deleteLocationDto(LocationDto locationDto);
 
     void editLocation(LocationDto locationDto, String id);
 }
