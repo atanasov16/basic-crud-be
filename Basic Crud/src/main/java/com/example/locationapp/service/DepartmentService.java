@@ -15,5 +15,5 @@ public interface DepartmentService {
     DepartmentDto editDepartment(UUID id, DepartmentDto departmentDto);
     void deleteDepartmentById(UUID id);
     DepartmentDto getDepartmentByName(String departmentName);
-    void addLocationToDepartment(DepartmentDto departmentDto, LocationDto locationDto);
+    DepartmentDto findByName(String name);
 }

@@ -16,6 +16,5 @@ public class Department {
     @Id
     private UUID uuid;
     private String name;
-    @OneToMany
-    private List<Location> locations;
+
 }

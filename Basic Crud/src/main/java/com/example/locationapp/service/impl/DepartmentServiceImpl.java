@@ -37,14 +37,8 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public void addLocationToDepartment(DepartmentDto departmentDto, LocationDto locationDto) {
-        Department department = departmentRepository.findById(UUID.fromString(departmentDto.getId())).orElse(null);
-        if (department != null) {
-            List<Location> locations = department.getLocations();
-            locations.add(LocationMapper.INSTANCE.toEntity(locationDto));
-            department.setLocations(locations);
-            departmentRepository.save(department);
-        }
+    public DepartmentDto findByName(String name) {
+        return DepartmentMapper.INSTANCE.toDto(departmentRepository.findByName(name));
     }
 
     @Override

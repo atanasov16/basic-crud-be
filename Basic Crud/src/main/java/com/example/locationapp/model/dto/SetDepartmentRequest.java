@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SetDepartmentRequest {
-    private Location location;
-    private Department department;
-
+    private LocationDto location;
+    private DepartmentDto department;
 }

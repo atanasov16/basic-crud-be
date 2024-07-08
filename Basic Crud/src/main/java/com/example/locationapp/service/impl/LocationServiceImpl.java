@@ -1,7 +1,8 @@
 package com.example.locationapp.service.impl;
 
-import com.example.locationapp.model.dto.DepartmentDto;
 import com.example.locationapp.model.dto.LocationDto;
+import com.example.locationapp.model.dto.SetDepartmentRequest;
+import com.example.locationapp.model.entity.Department;
 import com.example.locationapp.model.entity.Location;
 import com.example.locationapp.model.mapper.DepartmentMapper;
 import com.example.locationapp.model.mapper.LocationMapper;
@@ -9,7 +10,6 @@ import com.example.locationapp.repository.LocationRepository;
 import com.example.locationapp.service.DepartmentService;
 import com.example.locationapp.service.LocationService;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -39,15 +39,27 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public LocationDto updateLocation(LocationDto locationDto, DepartmentDto departmentDto) {
-        Location location = LocationMapper.INSTANCE.toEntity(locationDto);
-        location.setDepartment(DepartmentMapper.INSTANCE.toEntity(departmentDto));
-        departmentService.addLocationToDepartment(departmentDto, locationDto);
-        return null;
+    public LocationDto updateLocation(SetDepartmentRequest setDepartmentRequest) {
+        Location location = locationRepository.findById(LocationMapper.INSTANCE.toEntity(setDepartmentRequest.getLocation()).getUuid()).orElse(null);
+        if (location != null) {
+            Department department = DepartmentMapper.INSTANCE.toEntity(departmentService.getDepartmentById(DepartmentMapper.INSTANCE.toEntity(setDepartmentRequest.getDepartment()).getUuid()));
+            location.setDepartment(department);
+            setDepartmentRequest.getLocation().setDepartmentDto(setDepartmentRequest.getDepartment());
+            locationRepository.save(location);
+        }
+        return setDepartmentRequest.getLocation();
     }
+
 
     @Override
     public void deleteLocationDto(UUID id) {
 
+    }
+
+    @Override
+    public void editLocation(LocationDto newName, String id) {
+        Location location = locationRepository.getById(UUID.fromString(id));
+        location.setName(newName.getName());
+        locationRepository.save(location);
     }
 }
