@@ -1,8 +1,7 @@
 package com.example.locationapp.service.impl;
 
-import com.example.locationapp.model.dto.DepartmentDto;
+import com.example.locationapp.Exceptions.LocationNotFoundException;
 import com.example.locationapp.model.dto.LocationDto;
-import com.example.locationapp.model.dto.SetDepartmentRequest;
 import com.example.locationapp.model.entity.Department;
 import com.example.locationapp.model.entity.Location;
 import com.example.locationapp.model.mapper.DepartmentMapper;
@@ -34,37 +33,53 @@ public class LocationServiceImpl implements LocationService {
 
 
     @Override
-    public LocationDto createLocation(SetDepartmentRequest setDepartmentRequest) {
-        Location location = LocationMapper.INSTANCE.toEntity(setDepartmentRequest.getLocation());
-        Department department = DepartmentMapper.INSTANCE.toEntity(departmentService.getDepartmentById(DepartmentMapper.INSTANCE.toEntity(setDepartmentRequest.getDepartment()).getUuid()));
-//        DepartmentDto departmentDto = departmentService.getDepartmentById(DepartmentMapper.INSTANCE.toEntity(setDepartmentRequest.getDepartment()).getUuid());
-        location.setDepartment(department);
-        locationRepository.save(location);
-        return setDepartmentRequest.getLocation();
-    }
-
-    @Override
-    public LocationDto updateLocation(SetDepartmentRequest setDepartmentRequest) {
-        Location location = locationRepository.findById(LocationMapper.INSTANCE.toEntity(setDepartmentRequest.getLocation()).getUuid()).orElse(null);
+    public void createLocation(LocationDto locationDto) {
+        Location location = new Location();
+        Department department = DepartmentMapper.INSTANCE.toEntity(departmentService.findByName(locationDto.getDepartment().getName()));
         if (location != null) {
-            Department department = DepartmentMapper.INSTANCE.toEntity(departmentService.getDepartmentById(DepartmentMapper.INSTANCE.toEntity(setDepartmentRequest.getDepartment()).getUuid()));
+            location.setName(locationDto.getName());
             location.setDepartment(department);
-            setDepartmentRequest.getLocation().setDepartmentDto(setDepartmentRequest.getDepartment());
             locationRepository.save(location);
+        } else throw new LocationNotFoundException();
+    }
+
+    @Override
+    public void editLocation(UUID id, LocationDto locationDto) {
+        Location location = locationRepository.findById(id).orElse(null);
+        if (location != null) {
+            location.setDepartment(DepartmentMapper.INSTANCE.toEntity(departmentService.getDepartmentByName(locationDto.getDepartment().getName())));
+            location.setName(locationDto.getName());
+            locationRepository.save(location);
+        } else throw new LocationNotFoundException();
+    }
+
+    @Override
+    public void deleteLocationDto(UUID id) {
+        Location loc = locationRepository.findById(id).orElse(null);
+        if (loc != null) {
+            locationRepository.delete(loc);
+        } else {
+            throw new LocationNotFoundException();
         }
-        return setDepartmentRequest.getLocation();
-    }
-
-
-    @Override
-    public void deleteLocationDto(LocationDto locationDto) {
-        locationRepository.delete(LocationMapper.INSTANCE.toEntity(locationDto));
-    }
-
-    @Override
-    public void editLocation(LocationDto newName, String id) {
-        Location location = locationRepository.getById(UUID.fromString(id));
-        location.setName(newName.getName());
-        locationRepository.save(location);
     }
 }
+
+    //    public boolean updateLocation(SetDepartmentRequest setDepartmentRequest){
+//        Location location = locationRepository.findById(LocationMapper.INSTANCE.toEntity(setDepartmentRequest.getLocation()).getUuid()).orElse(null);
+//        Department department = DepartmentMapper.INSTANCE.toEntity(departmentService.getDepartmentById(DepartmentMapper.INSTANCE.toEntity(setDepartmentRequest.getDepartment()).getUuid()));
+//        if (location != null && department != null) {
+//            location.setDepartment(department);
+//            setDepartmentRequest.getLocation().setDepartmentDto(setDepartmentRequest.getDepartment());
+//            locationRepository.save(location);
+//            return true;
+//        }
+//        return false;
+
+//    }
+    //    @Override
+//    public LocationDto setNewLocation(SetDepartmentRequest setDepartmentRequest) {
+//        if(updateLocation(setDepartmentRequest)){
+//            return setDepartmentRequest.getLocation();
+//        } else throw new InvalidArgumentsException();
+//    }
+

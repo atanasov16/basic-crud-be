@@ -1,5 +1,6 @@
 package com.example.locationapp.model.dto;
 
+import com.example.locationapp.model.entity.Department;
 import jakarta.persistence.ManyToOne;
 import lombok.*;
 
@@ -9,5 +10,5 @@ import lombok.*;
 public class LocationDto {
     private String id;
     private String name;
-    private DepartmentDto departmentDto;
+    private Department department;
 }

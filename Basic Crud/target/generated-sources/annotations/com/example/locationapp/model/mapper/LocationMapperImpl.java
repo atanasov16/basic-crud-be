@@ -7,8 +7,8 @@ import javax.annotation.processing.Generated;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-07-08T16:29:18+0200",
-    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 19.0.1 (Oracle Corporation)"
+    date = "2024-07-09T14:22:33+0200",
+    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 17.0.10 (Amazon.com Inc.)"
 )
 public class LocationMapperImpl implements LocationMapper {
 
@@ -24,6 +24,7 @@ public class LocationMapperImpl implements LocationMapper {
             locationDto.setId( location.getUuid().toString() );
         }
         locationDto.setName( location.getName() );
+        locationDto.setDepartment( location.getDepartment() );
 
         return locationDto;
     }
@@ -40,6 +41,7 @@ public class LocationMapperImpl implements LocationMapper {
             location.setUuid( UUID.fromString( locationDto.getId() ) );
         }
         location.setName( locationDto.getName() );
+        location.setDepartment( locationDto.getDepartment() );
 
         return location;
     }

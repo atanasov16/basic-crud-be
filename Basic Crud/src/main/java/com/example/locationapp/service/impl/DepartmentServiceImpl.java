@@ -1,20 +1,15 @@
 package com.example.locationapp.service.impl;
 
+import com.example.locationapp.Exceptions.DepartmentNotFoundException;
 import com.example.locationapp.model.dto.DepartmentDto;
-import com.example.locationapp.model.dto.LocationDto;
 import com.example.locationapp.model.entity.Department;
-import com.example.locationapp.model.entity.Location;
 import com.example.locationapp.model.mapper.DepartmentMapper;
-import com.example.locationapp.model.mapper.LocationMapper;
 import com.example.locationapp.repository.DepartmentRepository;
 import com.example.locationapp.service.DepartmentService;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 @AllArgsConstructor
 @Service
@@ -42,18 +37,24 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public DepartmentDto createDepartment(DepartmentDto departmentDto) {
+    public void createDepartment(DepartmentDto departmentDto) {
         departmentRepository.save(DepartmentMapper.INSTANCE.toEntity(departmentDto));
-        return departmentDto;
     }
 
     @Override
-    public DepartmentDto editDepartment(UUID id, DepartmentDto departmentDto) {
-        return null;
+    public void editDepartment(UUID id, DepartmentDto departmentDto) {
+        Department department = departmentRepository.findById(id).orElse(null);
+        if (department != null) {
+            department.setName(departmentDto.getName());
+            departmentRepository.save(department);
+        } else throw new DepartmentNotFoundException();
     }
 
     @Override
     public void deleteDepartmentById(UUID id) {
-
+        Department department = departmentRepository.findById(id).orElse(null);
+        if(department != null) {
+            departmentRepository.delete(department);
+        } else throw new DepartmentNotFoundException();
     }
 }

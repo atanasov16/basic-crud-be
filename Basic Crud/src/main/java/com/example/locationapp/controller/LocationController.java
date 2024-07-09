@@ -7,9 +7,10 @@ import com.example.locationapp.service.LocationService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("locations")
+@RequestMapping("/locations")
 public class LocationController {
     LocationService locationService;
     DepartmentService departmentService;
@@ -25,26 +26,21 @@ public class LocationController {
     }
 
     @PostMapping("/add")
-    public String addNewLocation(@RequestBody SetDepartmentRequest setDepartmentRequest) {
-        locationService.createLocation(setDepartmentRequest);
+    public String addNewLocation(@RequestBody LocationDto locationDto) {
+        locationService.createLocation(locationDto);
         return "redirect:/locations";
     }
 
-    @PostMapping("/set-department")
-    public String setDepartments(@RequestBody SetDepartmentRequest setDepartmentRequest) {
-        locationService.updateLocation(setDepartmentRequest);
-        return "redirect:/locations";
-    }
 
-    @PostMapping("/edit-location/{id}")
+    @PutMapping("/edit/{id}")
     public String editLocation(@PathVariable String id, @RequestBody LocationDto locationDto) {
-        locationService.editLocation(locationDto, id);
+        locationService.editLocation(UUID.fromString(id), locationDto);
         return "redirect:/locations";
     }
 
-    @DeleteMapping("/delete")
-    public String deleteLocation(@RequestBody LocationDto locationDto) {
-        locationService.deleteLocationDto(locationDto);
+    @DeleteMapping("/delete/{id}")
+    public String deleteLocation(@PathVariable String id) {
+        locationService.deleteLocationDto(UUID.fromString(id));
         return "redirect:/locations";
     }
 }
