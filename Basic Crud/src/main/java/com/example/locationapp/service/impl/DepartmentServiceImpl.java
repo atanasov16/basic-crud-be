@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+
 @AllArgsConstructor
 @Service
 public class DepartmentServiceImpl implements DepartmentService {
@@ -23,12 +24,10 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public DepartmentDto getDepartmentById(UUID id) {
-        return DepartmentMapper.INSTANCE.toDto(departmentRepository.findById(id).orElse(null));
-    }
+        return departmentRepository.findById(id)
+                .map(DepartmentMapper.INSTANCE::toDto)
+                .orElseThrow(DepartmentNotFoundException::new);
 
-    @Override
-    public DepartmentDto getDepartmentByName(String name) {
-        return DepartmentMapper.INSTANCE.toDto(departmentRepository.findByName(name));
     }
 
     @Override
@@ -37,24 +36,23 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public void createDepartment(DepartmentDto departmentDto) {
+    public DepartmentDto createDepartment(DepartmentDto departmentDto) {
         departmentRepository.save(DepartmentMapper.INSTANCE.toEntity(departmentDto));
+        return departmentDto;
     }
 
     @Override
-    public void editDepartment(UUID id, DepartmentDto departmentDto) {
-        Department department = departmentRepository.findById(id).orElse(null);
-        if (department != null) {
-            department.setName(departmentDto.getName());
-            departmentRepository.save(department);
-        } else throw new DepartmentNotFoundException();
+    public DepartmentDto editDepartment(UUID id, DepartmentDto departmentDto) {
+        Department department = departmentRepository.findById(id).orElseThrow(DepartmentNotFoundException::new);
+        department.setName(departmentDto.getName());
+        departmentRepository.save(department);
+        return departmentDto;
     }
 
     @Override
-    public void deleteDepartmentById(UUID id) {
-        Department department = departmentRepository.findById(id).orElse(null);
-        if(department != null) {
-            departmentRepository.delete(department);
-        } else throw new DepartmentNotFoundException();
+    public DepartmentDto deleteDepartmentById(UUID id) {
+        Department department = departmentRepository.findById(id).orElseThrow(DepartmentNotFoundException::new);
+        departmentRepository.delete(department);
+        return DepartmentMapper.INSTANCE.toDto(department);
     }
 }

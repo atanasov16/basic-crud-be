@@ -2,6 +2,7 @@ package com.example.locationapp.controller;
 
 import com.example.locationapp.model.dto.DepartmentDto;
 import com.example.locationapp.service.DepartmentService;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,21 +21,18 @@ public class DepartmentController {
         return departmentService.getAllDepartments();
     }
     @PostMapping("/add")
-    public String addDepartment( @RequestBody DepartmentDto departmentDto) {
-        departmentService.createDepartment(departmentDto);
-        return "redirect:/departments";
+    public DepartmentDto addDepartment( @RequestBody DepartmentDto departmentDto) {
+        return departmentService.createDepartment(departmentDto);
     }
 
     @DeleteMapping("/delete/{id}")
-    public String deleteDepartment(@PathVariable String id) {
-        departmentService.deleteDepartmentById(UUID.fromString(id));
-        return "redirect:/departments";
+    public DepartmentDto deleteDepartment(@PathVariable String id) {
+        return departmentService.deleteDepartmentById(UUID.fromString(id));
     }
 
     @PutMapping("/edit/{id}")
-    public String editDepartment(@PathVariable String id, @RequestBody DepartmentDto departmentDto) {
-        departmentService.editDepartment(UUID.fromString(id), departmentDto);
-        return "redirect:/departments";
+    public DepartmentDto editDepartment(@PathVariable String id,  @RequestBody DepartmentDto departmentDto) {
+        return departmentService.editDepartment(UUID.fromString(id), departmentDto);
     }
 
 }

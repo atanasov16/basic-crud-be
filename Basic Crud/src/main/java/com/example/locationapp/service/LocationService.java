@@ -10,9 +10,9 @@ public interface LocationService {
 
     LocationDto getLocationById(UUID id);
 
-    void createLocation(LocationDto locationDto);
+    LocationDto createLocation(LocationDto locationDto);
 
-    void deleteLocationDto(UUID id);
+    LocationDto deleteLocationDto(UUID id);
 
-    void editLocation(UUID id, LocationDto locationDto);
+    LocationDto editLocation(UUID id, LocationDto locationDto);
 }

@@ -12,11 +12,9 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/locations")
 public class LocationController {
-    LocationService locationService;
-    DepartmentService departmentService;
+    private final LocationService locationService;
 
-    public LocationController(LocationService locationService, DepartmentService departmentService) {
-        this.departmentService = departmentService;
+    public LocationController(LocationService locationService) {
         this.locationService = locationService;
     }
 
@@ -39,8 +37,7 @@ public class LocationController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public String deleteLocation(@PathVariable String id) {
-        locationService.deleteLocationDto(UUID.fromString(id));
-        return "redirect:/locations";
+    public LocationDto deleteLocation(@PathVariable String id) {
+        return locationService.deleteLocationDto(UUID.fromString(id));
     }
 }

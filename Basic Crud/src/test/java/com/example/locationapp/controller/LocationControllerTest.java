@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -16,7 +17,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -43,6 +44,8 @@ public class LocationControllerTest {
     void testGetLocations() throws Exception {
         mockMvc.perform(get("/locations"))
                 .andExpect(status().isOk());
+        verify(locationService, times(1)).getAllLocations();
+        verifyNoMoreInteractions(locationService);
     }
 
     @Test
@@ -52,9 +55,11 @@ public class LocationControllerTest {
 
         mockMvc.perform(post("/locations/add")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\": \"New York\", \"description\": \"NY location\"}"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/locations"));
+                        .content("{\"name\": \"New York\"}"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("redirect:/locations"));
+        verify(locationService, times(1)).createLocation(any(LocationDto.class));
+        verifyNoMoreInteractions(locationService);
     }
 
     @Test
@@ -63,8 +68,10 @@ public class LocationControllerTest {
         doNothing().when(locationService).deleteLocationDto(id);
 
         mockMvc.perform(delete("/locations/delete/" + id))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/locations"));
+                .andExpect(status().isOk())
+                .andExpect(content().string("redirect:/locations"));
+        verify(locationService, times(1)).deleteLocationDto(id);
+        verifyNoMoreInteractions(locationService);
     }
 
     @Test
@@ -76,7 +83,10 @@ public class LocationControllerTest {
         mockMvc.perform(put("/locations/edit/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\": \"Edited second location\", \"department\": {\"name\": \"Department3\"}}"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/locations"));
+                .andExpect(status().isOk())
+                .andExpect(content().string("redirect:/locations"));
+        verify(locationService, times(1)).editLocation(any(UUID.class), any(LocationDto.class));
+        verifyNoMoreInteractions(locationService);
     }
+
 }

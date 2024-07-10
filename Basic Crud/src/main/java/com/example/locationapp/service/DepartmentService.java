@@ -10,13 +10,11 @@ public interface DepartmentService {
 
     DepartmentDto getDepartmentById(UUID id);
 
-    DepartmentDto getDepartmentByName(String departmentName);
-
     DepartmentDto findByName(String name);
 
-    void createDepartment(DepartmentDto departmentDto);
+    DepartmentDto createDepartment(DepartmentDto departmentDto);
 
-    void editDepartment(UUID id, DepartmentDto departmentDto);
+    DepartmentDto editDepartment(UUID id, DepartmentDto departmentDto);
 
-    void deleteDepartmentById(UUID id);
+    DepartmentDto deleteDepartmentById(UUID id);
 }

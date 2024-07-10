@@ -1,12 +1,15 @@
 package com.example.locationapp.controller;
 
 import com.example.locationapp.model.dto.DepartmentDto;
+import com.example.locationapp.model.mapper.DepartmentMapper;
 import com.example.locationapp.service.DepartmentService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -21,6 +24,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class DepartmentControllerTest {
     private MockMvc mockMvc;
+
+    ObjectMapper objectMapper = new ObjectMapper();
 
     @Mock
     private DepartmentService departmentService;
@@ -43,35 +48,41 @@ public class DepartmentControllerTest {
     @Test
     void testAddDepartment() throws Exception {
         DepartmentDto departmentDto = new DepartmentDto();
-        doNothing().when(departmentService).createDepartment(any(DepartmentDto.class));
-
+        when(departmentService.createDepartment(departmentDto)).thenReturn(departmentDto);
         mockMvc.perform(post("/departments/add")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\": \"HR\", \"description\": \"Human Resources\"}"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/departments"));
+                        .content("{\"name\": \"HR\"}"))
+                .andExpect(status().isOk());
     }
 
     @Test
     void testDeleteDepartment() throws Exception {
-        UUID id = UUID.randomUUID();
-        doNothing().when(departmentService).deleteDepartmentById(id);
-
-        mockMvc.perform(delete("/departments/delete/" + id))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/departments"));
+        String id = UUID.randomUUID().toString();
+        DepartmentDto departmentDto = new DepartmentDto();
+        departmentDto.setId(id);
+        departmentDto.setName("Test Department");
+        when(departmentService.deleteDepartmentById(UUID.fromString(id))).thenReturn(departmentDto);
+        mockMvc.perform(delete("/departments/delete/" + id)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(departmentDto.getId()))
+                .andExpect(jsonPath("$.name").value(departmentDto.getName()));
     }
 
     @Test
     void testEditDepartment() throws Exception {
-        UUID id = UUID.randomUUID();
+        String id = UUID.randomUUID().toString();
         DepartmentDto departmentDto = new DepartmentDto();
-        doNothing().when(departmentService).editDepartment(any(UUID.class), any(DepartmentDto.class));
+        departmentDto.setId(id);
+        departmentDto.setName("Edited Department");
+        String departmentString = objectMapper.writeValueAsString(departmentDto);
+        when(departmentService.editDepartment(UUID.fromString(id), departmentDto)).thenReturn(departmentDto);
 
         mockMvc.perform(put("/departments/edit/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\": \"Edited second department\"}"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/departments"));
+                        .content(departmentString))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(departmentDto.getId()))
+                .andExpect(jsonPath("$.name").value(departmentDto.getName()));
     }
 }
