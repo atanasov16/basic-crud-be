@@ -1,7 +1,7 @@
 <h1>Basic Crud Application</h1>
 <h3>Requirements</h3>
 <ul>
-  <li>JDK (Recommended: <a href="https://www.oracle.com/java/technologies/downloads/" target="_blank">OracleJDK</a>)</li>
+  <li>JDK (Recommended: <a href="https://www.oracle.com/java/technologies/downloads/" target="_blank">OracleJDK</a>) - 17 or above</li>
   <li>Maven</li>
   <li>IDE of choice (VSCode, Intellij, Eclipse..)</li>
   <li> <a href="https://www.postman.com/downloads/">Postman</a> - to generate requests (will not be needed when front-end is developed)</li>

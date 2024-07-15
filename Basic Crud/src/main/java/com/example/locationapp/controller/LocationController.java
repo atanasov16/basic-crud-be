@@ -24,16 +24,14 @@ public class LocationController {
     }
 
     @PostMapping("/add")
-    public String addNewLocation(@RequestBody LocationDto locationDto) {
-        locationService.createLocation(locationDto);
-        return "redirect:/locations";
+    public LocationDto addNewLocation(@RequestBody LocationDto locationDto) {
+        return locationService.createLocation(locationDto);
     }
 
 
     @PutMapping("/edit/{id}")
-    public String editLocation(@PathVariable String id, @RequestBody LocationDto locationDto) {
-        locationService.editLocation(UUID.fromString(id), locationDto);
-        return "redirect:/locations";
+    public LocationDto editLocation(@PathVariable String id, @RequestBody LocationDto locationDto) {
+        return locationService.editLocation(UUID.fromString(id), locationDto);
     }
 
     @DeleteMapping("/delete/{id}")

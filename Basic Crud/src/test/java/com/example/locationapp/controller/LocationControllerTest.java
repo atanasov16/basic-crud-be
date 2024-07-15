@@ -4,6 +4,7 @@ import com.example.locationapp.model.dto.LocationDto;
 import com.example.locationapp.model.dto.DepartmentDto;
 import com.example.locationapp.service.DepartmentService;
 import com.example.locationapp.service.LocationService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -24,12 +25,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class LocationControllerTest {
     private MockMvc mockMvc;
-
+    private ObjectMapper objectMapper = new ObjectMapper();
     @Mock
     private LocationService locationService;
-
-    @Mock
-    private DepartmentService departmentService;
 
     @InjectMocks
     private LocationController locationController;
@@ -52,12 +50,13 @@ public class LocationControllerTest {
     void testAddNewLocation() throws Exception {
         LocationDto locationDto = new LocationDto();
         when(locationService.createLocation(locationDto)).thenReturn(locationDto);
-
+        String obj = objectMapper.writeValueAsString(locationDto);
         mockMvc.perform(post("/locations/add")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\": \"New York\"}"))
+                        .content("{\"name\": \"New York\"}")
+                        .content(obj))
                 .andExpect(status().isOk())
-                .andExpect(content().string("redirect:/locations"));
+                .andExpect(jsonPath("$.id").value(locationDto.getId()));
         verify(locationService, times(1)).createLocation(any(LocationDto.class));
         verifyNoMoreInteractions(locationService);
     }
@@ -67,11 +66,11 @@ public class LocationControllerTest {
         LocationDto locationDto = new LocationDto();
         when(locationService.createLocation(locationDto)).thenReturn(locationDto);
 
+
         mockMvc.perform(post("/locations/add")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\": \"New York\"}"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("redirect:/locations"));
+                .andExpect(status().isOk());
         verify(locationService, times(1)).createLocation(any(LocationDto.class));
         verifyNoMoreInteractions(locationService);
     }
@@ -79,11 +78,14 @@ public class LocationControllerTest {
     @Test
     void testDeleteLocation() throws Exception {
         UUID id = UUID.randomUUID();
-        doNothing().when(locationService).deleteLocationDto(id);
+        LocationDto locationDto = new LocationDto();
+        locationDto.setId(id.toString());
+        when(locationService.deleteLocationDto(id)).thenReturn(locationDto);
 
-        mockMvc.perform(delete("/locations/delete/" + id))
+        mockMvc.perform(delete("/locations/delete/" + id)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string("redirect:/locations"));
+                .andExpect(jsonPath("$.id").value(locationDto.getId()));
         verify(locationService, times(1)).deleteLocationDto(id);
         verifyNoMoreInteractions(locationService);
     }
@@ -92,13 +94,15 @@ public class LocationControllerTest {
     void testEditLocation() throws Exception {
         UUID id = UUID.randomUUID();
         LocationDto locationDto = new LocationDto();
-        doNothing().when(locationService).editLocation(any(UUID.class), any(LocationDto.class));
-
+        locationDto.setId(id.toString());
+        String locationString = objectMapper.writeValueAsString(locationDto);
+        when(locationService.editLocation(id, locationDto)).thenReturn(locationDto);
         mockMvc.perform(put("/locations/edit/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\": \"Edited second location\", \"department\": {\"name\": \"Department3\"}}"))
+                        .content(locationString))
                 .andExpect(status().isOk())
-                .andExpect(content().string("redirect:/locations"));
+                .andExpect(jsonPath("$.id").value(locationDto.getId()))
+                .andExpect(jsonPath("$.name").value(locationDto.getName()));
         verify(locationService, times(1)).editLocation(any(UUID.class), any(LocationDto.class));
         verifyNoMoreInteractions(locationService);
     }
