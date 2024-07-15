@@ -1,10 +1,13 @@
 package com.example.locationapp.service;
 
+import com.example.locationapp.model.dto.DepartmentDto;
 import com.example.locationapp.model.dto.LocationDto;
 import com.example.locationapp.model.entity.Department;
 import com.example.locationapp.model.entity.Location;
+import com.example.locationapp.model.mapper.DepartmentMapper;
 import com.example.locationapp.model.mapper.LocationMapper;
 import com.example.locationapp.repository.LocationRepository;
+import com.example.locationapp.service.impl.DepartmentServiceImpl;
 import com.example.locationapp.service.impl.LocationServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,8 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,6 +30,9 @@ public class LocationServiceImplTest {
 
     @Mock
     private LocationRepository locationRepository;
+
+    @Mock
+    private DepartmentServiceImpl departmentService;
 
     @InjectMocks
     private LocationServiceImpl locationService;
@@ -66,7 +71,7 @@ public class LocationServiceImplTest {
     }
 
     @Test
-    void createLocationTest(){
+    void createLocationTest() {
         UUID uuid = UUID.randomUUID();
         Location location = new Location();
         location.setUuid(uuid);
@@ -79,5 +84,57 @@ public class LocationServiceImplTest {
         verify(locationRepository).save(location);
         assertNotNull(savedLoc);
         assertEquals(location.getUuid(), UUID.fromString(savedLoc.getId()));
+    }
+
+    @Test
+    void editLocationTest() {
+        UUID uuid = UUID.randomUUID();
+        Department department = new Department(UUID.randomUUID(), "Department1");
+        Location location = new Location(uuid, "OldLocationName", department);
+
+        LocationDto locationDto = new LocationDto();
+        locationDto.setId(uuid.toString());
+        locationDto.setName("locationDtoName");
+        locationDto.setDepartment(department);
+        Location updatedLocation = new Location(uuid, locationDto.getName(), department);
+
+        when(locationRepository.findById(uuid)).thenReturn(Optional.of(location));
+
+        when(locationRepository.save(any(Location.class))).thenReturn(updatedLocation);
+        when(departmentService.findByName(anyString())).thenReturn(DepartmentMapper.INSTANCE.toDto(department));
+
+        LocationDto updatedLocationDto = locationService.editLocation(uuid, locationDto);
+
+        verify(locationRepository).findById(uuid);
+        verify(locationRepository).save(any(Location.class));
+
+        assertAll("Verify edited location",
+                () -> assertNotNull(updatedLocationDto),
+                () -> assertEquals(locationDto.getName(), updatedLocationDto.getName()),
+                () -> assertEquals(locationDto.getId(), updatedLocationDto.getId()),
+                () -> assertEquals(locationDto.getDepartment().getName(), updatedLocationDto.getDepartment().getName())
+        );
+    }
+
+    @Test
+    void deleteLocationTest() {
+        UUID uuid = UUID.randomUUID();
+        Department department = new Department(UUID.randomUUID(), "Department1");
+        Location location = new Location(uuid, "Location1", department);
+        LocationDto locationDto = LocationMapper.INSTANCE.toDto(location);
+
+        when(locationRepository.findById(uuid)).thenReturn(Optional.of(location));
+
+        LocationDto deletedLocationDto = locationService.deleteLocationDto(uuid);
+
+        verify(locationRepository).findById(uuid);
+        verify(locationRepository).delete(location);
+
+        assertAll("Verify deleted location",
+                () -> assertNotNull(deletedLocationDto),
+                () -> assertEquals(locationDto.getName(), deletedLocationDto.getName()),
+                () -> assertEquals(locationDto.getId(), deletedLocationDto.getId()),
+                () -> assertEquals(locationDto.getDepartment().getName(), deletedLocationDto.getDepartment().getName())
+        );
     }
 }
