@@ -34,6 +34,6 @@ click on Body > raw > JSON and type the following line<br>
   - This request will send a JSON file as request body <br>- the controller will pass it to the internal business logic <br>- a new department with the name Department1 is created in the database.
 </p>
 </p>
-Following this blueprint, all of the forementioned functionalities of this app should be working properly.
+Following these steps, all of the forementioned functionalities of this app should be working properly.
 #Not finished;
 #Test almost done;
