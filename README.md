@@ -25,15 +25,15 @@ Make sure you have installed OracleJDK for java 17 and above<br>Open your favour
 <h3>Example</h3>
 <p>Lets create a new department</p>
 <p>Open postman while the app is running,<br>
-type localhost:8080/departments/add<br>
-select post method from the left dropdown<br>
+Type localhost:8080/departments/add<br>
+Select post method from the left dropdown<br>
 click on Body > raw > JSON and type the following line<br>
 {
     "name":"Department1"
 } <br>
-  - This request will send a JSON file as request body <br>- the controller will pass it to the internal business logic <br>- a new department with the name Department1 is created in the database.
+  - This request will send a JSON file as a request body <br>- the controller will pass it to the internal business logic <br>- a new department with the name Department1 will be created in the database.
 </p>
 </p>
-Following these steps, all of the forementioned functionalities of this app should be working properly.
-#Not finished;
+Following these steps, all of the forementioned functionalities of this app should be working properly.<br><br>
+#Not finished;<br>
 #Test almost done;
