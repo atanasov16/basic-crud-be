@@ -51,7 +51,21 @@ public class LocationControllerTest {
     @Test
     void testAddNewLocation() throws Exception {
         LocationDto locationDto = new LocationDto();
-        doNothing().when(locationService).createLocation(any(LocationDto.class));
+        when(locationService.createLocation(locationDto)).thenReturn(locationDto);
+
+        mockMvc.perform(post("/locations/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\": \"New York\"}"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("redirect:/locations"));
+        verify(locationService, times(1)).createLocation(any(LocationDto.class));
+        verifyNoMoreInteractions(locationService);
+    }
+
+    @Test
+    void testAddNewLocationWithDepartment() throws Exception {
+        LocationDto locationDto = new LocationDto();
+        when(locationService.createLocation(locationDto)).thenReturn(locationDto);
 
         mockMvc.perform(post("/locations/add")
                         .contentType(MediaType.APPLICATION_JSON)
