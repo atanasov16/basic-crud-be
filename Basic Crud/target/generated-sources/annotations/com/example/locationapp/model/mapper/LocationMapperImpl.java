@@ -7,7 +7,7 @@ import javax.annotation.processing.Generated;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-07-10T16:51:13+0200",
+    date = "2024-08-21T21:57:47+0200",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 19.0.1 (Oracle Corporation)"
 )
 public class LocationMapperImpl implements LocationMapper {
