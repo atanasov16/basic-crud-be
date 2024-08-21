@@ -1,0 +1,12 @@
+-------------------------------------------------------------------------------
+Test set: com.example.locationapp.service.LocationServiceImplTest
+-------------------------------------------------------------------------------
+Tests run: 4, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.408 s <<< FAILURE! -- in com.example.locationapp.service.LocationServiceImplTest
+com.example.locationapp.service.LocationServiceImplTest.editLocationTest -- Time elapsed: 0.357 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "com.example.locationapp.model.entity.Department.getName()" because the return value of "com.example.locationapp.model.dto.LocationDto.getDepartment()" is null
+	at com.example.locationapp.service.impl.LocationServiceImpl.editLocation(LocationServiceImpl.java:52)
+	at com.example.locationapp.service.LocationServiceImplTest.editLocationTest(LocationServiceImplTest.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+

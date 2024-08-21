@@ -35,10 +35,12 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     public LocationDto createLocation(LocationDto locationDto) {
-        Department department = DepartmentMapper.INSTANCE
-                .toEntity(departmentService.findByName(locationDto.getDepartment().getName()));
+        Department department = new Department();
         Location location = LocationMapper.INSTANCE.toEntity(locationDto);
-        location.setDepartment(department);
+        if(locationDto.getDepartment()!=null){
+            department = DepartmentMapper.INSTANCE.toEntity(departmentService.findByName(locationDto.getDepartment().getName()));
+            location.setDepartment(department);
+        }
         locationRepository.save(location);
         return locationDto;
     }
